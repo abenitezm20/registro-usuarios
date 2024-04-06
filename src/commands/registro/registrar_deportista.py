@@ -27,8 +27,10 @@ class RegistrarDeportista(BaseCommand):
         self.contrasena = contrasena
 
     def execute(self):
-        logging.info(f'Registrando Deportista')
+        logging.info(f'Validando Información')
+        
 
+        logging.info(f'Registrando Deportista')
         record = Deportista(self.nombre, self.apellido, self.tipo_identificacion, self.numero_identificacion, self.email, self.genero, self.edad, self.peso, self.altura, self.pais_nacimiento, self.ciudad_nacimiento, self.pais_residencia, self.ciudad_residencia, self.antiguedad_residencia, self.contrasena)
         db_session.add(record)
         db_session.commit()

@@ -45,6 +45,16 @@ class RegistrarDeportista(BaseCommand):
             logging.error("Número de identificación mayor a 15 digitos")
             raise BadRequest
         
+        # Validar que la edad no sea mayor a 3 dígitos
+        if len(str(self.edad)) > 3:
+            logging.error("Edad mayor a 3 digitos")
+            raise BadRequest
+        
+        # Validar que el peso no sea mayor a 3 dígitos y 1 decimal
+        if len(str(self.peso)) > 5:
+            logging.error("Peso mayor a 3 digitos y 1 decimal")
+            raise BadRequest
+        
         # Validar que deportista no exista
         deportista = db_session.query(Deportista).filter(
             Deportista.email == self.email).first()

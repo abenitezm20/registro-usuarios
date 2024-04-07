@@ -31,3 +31,8 @@ class ResourceNotFound(ApiError):
 class PreconditionFailed(ApiError):
     code = 412
     description = "precondition_failed"
+
+
+class UserAlreadyExist(ApiError):
+    code = 432
+    description = "user_already_exists"

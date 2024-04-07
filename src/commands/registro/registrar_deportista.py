@@ -35,6 +35,11 @@ class RegistrarDeportista(BaseCommand):
             logging.error("Información invalida")
             raise BadRequest
         
+        # Validar que la información no sea vacía
+        if self.nombre == "" or self.apellido == "" or self.tipo_identificacion == "" or self.numero_identificacion == "" or self.email == "" or self.genero == "" or self.edad == "" or self.peso == "" or self.altura == "" or self.pais_nacimiento == "" or self.ciudad_nacimiento == "" or self.pais_residencia == "" or self.ciudad_residencia == "" or self.antiguedad_residencia == "" or self.contrasena == "":
+            logging.error("Información invalida")
+            raise BadRequest
+        
         # Validar que deportista no exista
         deportista = db_session.query(Deportista).filter(
             Deportista.email == self.email).first()

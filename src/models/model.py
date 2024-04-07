@@ -6,9 +6,9 @@ from sqlalchemy.dialects.postgresql import UUID
 
 class Model():
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    createdAt = Column(DateTime)
-    updatedAt = Column(DateTime)
+    created_at = Column(DateTime)
+    updated_at = Column(DateTime)
 
     def __init__(self):
-        self.createdAt = datetime.now()
-        self.updatedAt = datetime.now()
+        self.created_at = datetime.now()
+        self.updated_at = datetime.now()

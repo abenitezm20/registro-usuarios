@@ -40,6 +40,11 @@ class RegistrarDeportista(BaseCommand):
             logging.error("Información invalida")
             raise BadRequest
         
+        # Validar que la identificación no sea mayor a 15 dígitos
+        if len(str(self.numero_identificacion)) > 15:
+            logging.error("Número de identificación mayor a 15 digitos")
+            raise BadRequest
+        
         # Validar que deportista no exista
         deportista = db_session.query(Deportista).filter(
             Deportista.email == self.email).first()

@@ -1,6 +1,6 @@
 import enum
 from datetime import datetime
-from sqlalchemy import Column, Integer, Enum, String, Float
+from sqlalchemy import Column, Integer, Enum, String, Float, BigInteger
 from .model import Model
 from .db import Base
 
@@ -24,7 +24,7 @@ class Deportista(Model, Base):
     nombre = Column(String(50))
     apellido = Column(String(50))
     tipo_identificacion = Column(Enum(Tipo_IdentificacionEnum))
-    numero_identificacion = Column(Integer)                                
+    numero_identificacion = Column(BigInteger)                                
     email = Column(String(50), unique=True)
     genero = Column(Enum(GeneroEnum))
     edad = Column(Integer)

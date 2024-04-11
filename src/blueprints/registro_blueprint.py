@@ -1,6 +1,7 @@
 import logging
 from flask import Blueprint, request, jsonify, make_response
 from src.commands.registro.registrar_deportista import RegistrarDeportista
+from src.commands.registro.registrar_socios import RegistrarSocios
 
 
 logger = logging.getLogger(__name__)
@@ -26,6 +27,20 @@ def registrar_deportista():
         body.get('pais_residencia', None),
         body.get('ciudad_residencia', None),
         body.get('antiguedad_residencia', None),
+        body.get('contrasena', None)
+    ).execute()
+    return make_response(jsonify(result), 200)
+
+
+@registro_blueprint.route('/socios', methods=['POST'])
+def registrar_socios():
+    body = request.get_json()
+
+    result = RegistrarSocios(
+        body.get('nombre', None),
+        body.get('tipo_identificacion', None),
+        body.get('numero_identificacion', None),                        
+        body.get('email', None),
         body.get('contrasena', None)
     ).execute()
     return make_response(jsonify(result), 200)

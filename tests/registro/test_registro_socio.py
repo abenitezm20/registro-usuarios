@@ -44,31 +44,21 @@ class TestRegistroSocio():
             assert response.status_code == 200  
             assert response.json['message'] == 'success'
     
-    # def test_registro_deportista_existente(self, setup_data: Deportista):
-    #     '''Prueba de crear un deportista exitosamente'''
-    #     with app.test_client() as test_client:
-    #         body = {
-    #             "nombre": setup_data.nombre,
-    #             "apellido": setup_data.apellido,
-    #             "tipo_identificacion": setup_data.tipo_identificacion,
-    #             "numero_identificacion": setup_data.numero_identificacion,
-    #             "email": setup_data.email,
-    #             "genero": setup_data.genero,
-    #             "edad": setup_data.edad,
-    #             "peso": setup_data.peso,
-    #             "altura": setup_data.altura,
-    #             "pais_nacimiento": setup_data.pais_nacimiento,
-    #             "ciudad_nacimiento": setup_data.ciudad_nacimiento,
-    #             "pais_residencia": setup_data.pais_residencia,
-    #             "ciudad_residencia": setup_data.ciudad_residencia,
-    #             "antiguedad_residencia": setup_data.antiguedad_residencia,
-    #             "contrasena": setup_data.contrasena
-    #         }
+    def test_registro_socio_existente(self, setup_data: SocioNegocio):
+        '''Prueba de crear un socio exitosamente'''
+        with app.test_client() as test_client:
+            body = {
+                "nombre": setup_data.nombre,
+                "tipo_identificacion": setup_data.tipo_identificacion,
+                "numero_identificacion": setup_data.numero_identificacion,
+                "email": setup_data.email,
+                "contrasena": setup_data.contrasena
+            }
 
-    #         response = test_client.post(
-    #             'registro-usuarios/registro/deportistas', json=body)
+            response = test_client.post(
+                'registro-usuarios/registro/socios', json=body)
 
-    #         assert response.status_code == 432
+            assert response.status_code == 432
 
     # def test_registro_deportista_campos_vacios(self):
     #     '''Prueba de crear un deportista con campos vacios'''

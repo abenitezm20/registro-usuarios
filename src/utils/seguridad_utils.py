@@ -57,6 +57,7 @@ def token_required(func):
 
 def get_token(email: str):
     logger.info(f'Obteniendo token para {email}')
+    logger.info(f'URL {URL_GENERAR_TOKEN}')
     try:
         response = requests.post(
             url=URL_GENERAR_TOKEN, json={"email": email})

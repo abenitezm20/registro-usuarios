@@ -18,21 +18,21 @@ class RegistrarSocios(BaseCommand):
         self.contrasena = contrasena
 
     def execute(self):
-        logging.info(f'Validando Información: {self.email}')
+        logger.info(f'Validando Información: {self.email}')
        
         # Validar que la información no sea vacía
         if self.nombre == "" or self.tipo_identificacion == "" or self.numero_identificacion == "" or self.email == "" or self.contrasena == "":
-            logging.error("Información invalida")
+            logger.error("Información invalida")
             raise BadRequest
         
         # Validar que Socio no exista
         socio = db_session.query(SocioNegocio).filter(SocioNegocio.email == self.email).first()
 
         if socio is not None:
-            logging.error("Socio de Negocio Ya Existe")
+            logger.error("Socio de Negocio Ya Existe")
             raise UserAlreadyExist
         else:
-            logging.info(f'Registrando Socio de Negocio')
+            logger.info(f"Registrando Socio de Negocio: {self.email}")
             record = SocioNegocio(self.nombre, self.tipo_identificacion, self.numero_identificacion, self.email, self.contrasena)
             db_session.add(record)
             db_session.commit()

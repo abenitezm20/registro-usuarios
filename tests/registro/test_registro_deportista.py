@@ -6,7 +6,7 @@ from unittest.mock import patch, MagicMock
 from faker import Faker
 from src.main import app
 from src.models.db import db_session
-from src.models.deportista import Deportista, GeneroEnum, Tipo_IdentificacionEnum
+from src.models.deportista import Deportista, GeneroEnum, TipoIdentificacionEnum
 
 
 fake = Faker()
@@ -18,7 +18,7 @@ def setup_data():
             nombre=fake.name(),
             apellido=fake.name(),
             tipo_identificacion=fake.random_element(elements=(
-                tipo_identificacion.value for tipo_identificacion in Tipo_IdentificacionEnum)),
+                tipo_identificacion.value for tipo_identificacion in TipoIdentificacionEnum)),
             numero_identificacion=fake.random_int(min=1000000, max=999999999),
             email=fake.email(),
             genero=fake.random_element(

@@ -5,7 +5,7 @@ from .model import Model
 from .db import Base
 
 
-class Tipo_IdentificacionSocioEnum(str, enum.Enum):
+class TipoIdentificacionSocioEnum(str, enum.Enum):
     tarjeta_identidad = "tarjeta_identidad"
     cedula_ciudadania = "cedula_ciudadania"
     cedula_extranjeria = "cedula_extranjeria"
@@ -17,7 +17,7 @@ class Tipo_IdentificacionSocioEnum(str, enum.Enum):
 class SocioNegocio(Model, Base):
     __tablename__ = "socio_negocio"
     nombre = Column(String(50))
-    tipo_identificacion = Column(Enum(Tipo_IdentificacionSocioEnum))
+    tipo_identificacion = Column(Enum(TipoIdentificacionSocioEnum))
     numero_identificacion = Column(String(50))                                
     email = Column(String(50), unique=True)
     contrasena = Column(String(50))

@@ -11,7 +11,7 @@ URL_AUTORIZADOR = os.getenv(
     'URL_AUTORIZADOR', 'http://127.0.0.1:3000/autorizador')
 URL_VALIDAR_TOKEN = URL_AUTORIZADOR + '/seguridad/validar-token'
 URL_GENERAR_TOKEN = URL_AUTORIZADOR + '/seguridad/generar-token'
-
+TOKEN_INVALIDO = 'Token invalido'
 
 logger = logging.getLogger(__name__)
 
@@ -38,13 +38,13 @@ def token_required(func):
                 data = response.json()
 
                 if data['token_valido'] is False:
-                    logger.error('Token invalido')
+                    logger.error(TOKEN_INVALIDO)
                     raise Unauthorized
 
                 logger.info('Token valido')
                 email = data['email']
             else:
-                logger.error('Token invalido')
+                logger.error(TOKEN_INVALIDO)
                 raise Unauthorized
 
         except Exception as e:
@@ -57,6 +57,7 @@ def token_required(func):
 
 def get_token(email: str):
     logger.info(f'Obteniendo token para {email}')
+    logger.info(f'URL {URL_GENERAR_TOKEN}')
     try:
         response = requests.post(
             url=URL_GENERAR_TOKEN, json={"email": email})
@@ -65,7 +66,7 @@ def get_token(email: str):
             data = response.json()
 
             if data['token'] is None:
-                logger.error('Token invalido')
+                logger.error(TOKEN_INVALIDO)
                 raise ApiError
 
             return data['token']

@@ -1,5 +1,5 @@
-# Created by https://www.toptal.com/developers/gitignore/api/windows,linux,macos,python,flask,visualstudiocode,intellij
-# Edit at https://www.toptal.com/developers/gitignore?templates=windows,linux,macos,python,flask,visualstudiocode,intellij
+# Created by https://www.toptal.com/developers/gitignore/api/flask,linux,macos,python,windows,intellij,visualstudiocode,sonar,sonarqube
+# Edit at https://www.toptal.com/developers/gitignore?templates=flask,linux,macos,python,windows,intellij,visualstudiocode,sonar,sonarqube
 
 ### Flask ###
 instance/*
@@ -420,6 +420,23 @@ poetry.toml
 # LSP config files
 pyrightconfig.json
 
+### Sonar ###
+#Sonar generated dir
+/.sonar/
+
+### SonarQube ###
+# SonarQube ignore files.
+#
+# https://docs.sonarqube.org/display/SCAN/Analyzing+with+SonarQube+Scanner
+# Sonar Scanner working directories
+.sonar/
+.sonarqube/
+.scannerwork/
+
+# http://www.sonarlint.org/commandline/
+# SonarLint working directories, configuration files (including credentials)
+.sonarlint/
+
 ### VisualStudioCode ###
 .vscode/*
 !.vscode/settings.json
@@ -465,4 +482,4 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 
-# End of https://www.toptal.com/developers/gitignore/api/windows,linux,macos,python,flask,visualstudiocode,intellij
+# End of https://www.toptal.com/developers/gitignore/api/flask,linux,macos,python,windows,intellij,visualstudiocode,sonar,sonarqube

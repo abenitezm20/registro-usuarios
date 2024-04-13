@@ -5,7 +5,7 @@ from .model import Model
 from .db import Base
 
 
-class Tipo_IdentificacionEnum(str, enum.Enum):
+class TipoIdentificacionEnum(str, enum.Enum):
     tarjeta_identidad = "tarjeta_identidad"
     cedula_ciudadania = "cedula_ciudadania"
     cedula_extranjeria = "cedula_extranjeria"
@@ -23,8 +23,8 @@ class Deportista(Model, Base):
     __tablename__ = "deportista"
     nombre = Column(String(50))
     apellido = Column(String(50))
-    tipo_identificacion = Column(Enum(Tipo_IdentificacionEnum))
-    numero_identificacion = Column(BigInteger)                                
+    tipo_identificacion = Column(Enum(TipoIdentificacionEnum))
+    numero_identificacion = Column(BigInteger)
     email = Column(String(50), unique=True)
     genero = Column(Enum(GeneroEnum))
     edad = Column(Integer)
@@ -37,22 +37,6 @@ class Deportista(Model, Base):
     antiguedad_residencia = Column(Integer)
     contrasena = Column(String(50))
 
-
-    def __init__(self, nombre, apellido, tipo_identificacion, numero_identificacion, email, genero, edad, peso, altura, pais_nacimiento, ciudad_nacimiento, pais_residencia, ciudad_residencia, antiguedad_residencia, contrasena):
+    def __init__(self, **info_deportista):
         Model.__init__(self)
-        self.nombre = nombre
-        self.apellido = apellido
-        self.tipo_identificacion = tipo_identificacion
-        self.numero_identificacion = numero_identificacion
-        self.email = email
-        self.genero = genero
-        self.edad = edad
-        self.peso = peso
-        self.altura = altura
-        self.pais_nacimiento = pais_nacimiento
-        self.ciudad_nacimiento = ciudad_nacimiento
-        self.pais_residencia = pais_residencia
-        self.ciudad_residencia = ciudad_residencia
-        self.antiguedad_residencia = antiguedad_residencia
-        self.contrasena = contrasena
-        
+        self.__dict__.update(info_deportista)

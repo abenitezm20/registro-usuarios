@@ -6,56 +6,45 @@ from unittest.mock import patch, MagicMock
 from faker import Faker
 from src.main import app
 from src.models.db import db_session
-from src.models.deportista import Deportista, GeneroEnum, TipoIdentificacionEnum
+from src.models.socio_negocio import SocioNegocio, TipoIdentificacionSocioEnum
 
 
 fake = Faker()
 logger = logging.getLogger(__name__)
 
+URL_LOGIN_SOCIO_NEGOCIO = 'registro-usuarios/login/socio-negocio'
+
 
 @pytest.fixture(scope="class")
 def setup_data():
-    logger.info("Inicio TestLoginDeportista")
+    logger.info("Inicio TestLoginSocioNegocio")
 
-    info_deportista = {
-        'nombre': fake.name(),
-        'apellido': fake.name(),
-        'tipo_identificacion': fake.random_element(elements=(
-            tipo_identificacion.value for tipo_identificacion in TipoIdentificacionEnum)),
-        'numero_identificacion': fake.random_int(min=1000000, max=9999999),
-        'email': fake.email(),
-        'genero': fake.random_element(
-            elements=(genero.value for genero in GeneroEnum)),
-        'edad': fake.random_int(min=18, max=100),
-        'peso': fake.random_int(min=40, max=200),
-        'altura': fake.random_int(min=140, max=200),
-        'pais_nacimiento': fake.country(),
-        'ciudad_nacimiento': fake.city(),
-        'pais_residencia': fake.country(),
-        'ciudad_residencia': fake.city(),
-        'antiguedad_residencia': fake.random_int(min=0, max=10),
-        'contrasena': fake.password(),
-    }
-    deportista_random = Deportista(**info_deportista)
+    socio_negocio_random = SocioNegocio(
+        nombre=fake.name(),
+        tipo_identificacion=fake.random_element(elements=(
+            tipo_identificacion.value for tipo_identificacion in TipoIdentificacionSocioEnum)),
+        numero_identificacion=fake.random_int(min=1000000, max=9999999),
+        email=fake.email(),
+        contrasena=fake.password(),
+    )
 
-    db_session.add(deportista_random)
+    db_session.add(socio_negocio_random)
     db_session.commit()
-    logger.info('Deportista creado: ' + deportista_random.email)
-    yield deportista_random
-    logger.info("Fin TestLoginDeportista")
-    db_session.delete(deportista_random)
+    logger.info('Socio negocio creado: ' + socio_negocio_random.email)
+    yield socio_negocio_random
+    logger.info("Fin TestLoginSocioNegocio")
+    db_session.delete(socio_negocio_random)
     db_session.commit()
 
 
 @pytest.mark.usefixtures("setup_data")
-class TestLoginDeportista():
+class TestLoginSocioNegocio():
 
     def test_login_sin_contrasena(self):
         with app.test_client() as test_client:
             body = {"email": fake.email()}
 
-            response = test_client.post(
-                'registro-usuarios/login/deportista', json=body)
+            response = test_client.post(URL_LOGIN_SOCIO_NEGOCIO, json=body)
             response_json = json.loads(response.data)
 
             assert response.status_code == 400
@@ -65,8 +54,7 @@ class TestLoginDeportista():
         with app.test_client() as test_client:
             body = {"email": fake.email(), "contrasena": "123"}
 
-            response = test_client.post(
-                'registro-usuarios/login/deportista', json=body)
+            response = test_client.post(URL_LOGIN_SOCIO_NEGOCIO, json=body)
             response_json = json.loads(response.data)
 
             assert response.status_code == 400
@@ -76,8 +64,7 @@ class TestLoginDeportista():
         with app.test_client() as test_client:
             body = {"contrasena": fake.password()}
 
-            response = test_client.post(
-                'registro-usuarios/login/deportista', json=body)
+            response = test_client.post(URL_LOGIN_SOCIO_NEGOCIO, json=body)
             response_json = json.loads(response.data)
 
             assert response.status_code == 400
@@ -87,8 +74,7 @@ class TestLoginDeportista():
         with app.test_client() as test_client:
             body = {"email": "email_invalido", "contrasena": fake.password()}
 
-            response = test_client.post(
-                'registro-usuarios/login/deportista', json=body)
+            response = test_client.post(URL_LOGIN_SOCIO_NEGOCIO, json=body)
             response_json = json.loads(response.data)
 
             assert response.status_code == 400
@@ -98,26 +84,24 @@ class TestLoginDeportista():
         with app.test_client() as test_client:
             body = {"email": fake.email(), "contrasena": fake.password()}
 
-            response = test_client.post(
-                'registro-usuarios/login/deportista', json=body)
+            response = test_client.post(URL_LOGIN_SOCIO_NEGOCIO, json=body)
             response_json = json.loads(response.data)
 
             assert response.status_code == 404
             assert response_json['error'] == 'resource_not_found'
 
-    def test_login_contrasena_invalida(self, setup_data: Deportista):
+    def test_login_contrasena_invalida(self, setup_data: SocioNegocio):
         with app.test_client() as test_client:
             body = {"email": setup_data.email, "contrasena": fake.password()}
 
-            response = test_client.post(
-                'registro-usuarios/login/deportista', json=body)
+            response = test_client.post(URL_LOGIN_SOCIO_NEGOCIO, json=body)
             response_json = json.loads(response.data)
 
             assert response.status_code == 401
             assert response_json['error'] == 'unauthorized'
 
     @patch('requests.post')
-    def test_login_exitoso(self, mock_post, setup_data: Deportista):
+    def test_login_exitoso(self, mock_post, setup_data: SocioNegocio):
         with app.test_client() as test_client:
             mock_response = MagicMock()
             mock_response.status_code = 200
@@ -127,8 +111,7 @@ class TestLoginDeportista():
             body = {"email": setup_data.email,
                     "contrasena": setup_data.contrasena}
 
-            response = test_client.post(
-                'registro-usuarios/login/deportista', json=body)
+            response = test_client.post(URL_LOGIN_SOCIO_NEGOCIO, json=body)
             response_json = json.loads(response.data)
 
             assert response.status_code == 200

@@ -12,27 +12,36 @@ from src.models.deportista import Deportista, GeneroEnum, TipoIdentificacionEnum
 fake = Faker()
 logger = logging.getLogger(__name__)
 
+
 @pytest.fixture(scope="class")
 def setup_data():
-        deportista_random = Deportista(
-            nombre=fake.name(),
-            apellido=fake.name(),
-            tipo_identificacion=fake.random_element(elements=(
-                tipo_identificacion.value for tipo_identificacion in TipoIdentificacionEnum)),
-            numero_identificacion=fake.random_int(min=1000000, max=999999999),
-            email=fake.email(),
-            genero=fake.random_element(
-                elements=(genero.value for genero in GeneroEnum)),
-            edad=fake.random_int(min=18, max=100),
-            peso=fake.pyfloat(3,1, positive=True),
-            altura=fake.random_int(min=140, max=200),
-            pais_nacimiento=fake.country(),
-            ciudad_nacimiento=fake.city(),
-            pais_residencia=fake.country(),
-            ciudad_residencia=fake.city(),
-            antiguedad_residencia=fake.random_int(min=0, max=10),
-            contrasena=fake.password())
-        return deportista_random
+    info_deportista = {
+        'nombre': fake.name(),
+        'apellido': fake.name(),
+        'tipo_identificacion': fake.random_element(elements=(
+            tipo_identificacion.value for tipo_identificacion in TipoIdentificacionEnum)),
+        'numero_identificacion': fake.random_int(min=1000000, max=999999999),
+        'email': fake.email(),
+        'genero': fake.random_element(elements=(genero.value for genero in GeneroEnum)),
+        'edad': fake.random_int(min=18, max=100),
+        'peso': fake.pyfloat(3, 1, positive=True),
+        'altura': fake.random_int(min=140, max=200),
+        'pais_nacimiento': fake.country(),
+        'ciudad_nacimiento': fake.city(),
+        'pais_residencia': fake.country(),
+        'ciudad_residencia': fake.city(),
+        'antiguedad_residencia': fake.random_int(min=0, max=10),
+        'contrasena': fake.password()
+    }
+
+    deportista_random = Deportista(**info_deportista)
+    yield deportista_random
+
+    tmp_deportista = db_session.query(Deportista).filter(
+        Deportista.email == deportista_random.email).first()
+    if tmp_deportista is not None:
+        db_session.delete(tmp_deportista)
+        db_session.commit()
 
 
 @pytest.mark.usefixtures("setup_data")
@@ -62,9 +71,9 @@ class TestRegistroDeportista():
             response = test_client.post(
                 'registro-usuarios/registro/deportistas', json=body)
 
-            assert response.status_code == 200  
+            assert response.status_code == 200
             assert response.json['message'] == 'success'
-    
+
     def test_registro_deportista_existente(self, setup_data: Deportista):
         '''Prueba de crear un deportista exitosamente'''
         with app.test_client() as test_client:
@@ -150,7 +159,7 @@ class TestRegistroDeportista():
                 "nombre": setup_data.nombre,
                 "apellido": setup_data.apellido,
                 "tipo_identificacion": setup_data.tipo_identificacion,
-                 "numero_identificacion": setup_data.numero_identificacion,
+                "numero_identificacion": setup_data.numero_identificacion,
                 "email": fake.email(),
                 "genero": setup_data.genero,
                 "edad": fake.random_int(min=1000, max=9999),
@@ -176,11 +185,11 @@ class TestRegistroDeportista():
                 "nombre": setup_data.nombre,
                 "apellido": setup_data.apellido,
                 "tipo_identificacion": setup_data.tipo_identificacion,
-                 "numero_identificacion": setup_data.numero_identificacion,
+                "numero_identificacion": setup_data.numero_identificacion,
                 "email": fake.email(),
                 "genero": setup_data.genero,
                 "edad": setup_data.edad,
-                "peso": fake.pyfloat(4,2, positive=True),
+                "peso": fake.pyfloat(4, 2, positive=True),
                 "altura": setup_data.altura,
                 "pais_nacimiento": setup_data.pais_nacimiento,
                 "ciudad_nacimiento": setup_data.ciudad_nacimiento,
@@ -194,7 +203,7 @@ class TestRegistroDeportista():
                 'registro-usuarios/registro/deportistas', json=body)
 
             assert response.status_code == 400
-    
+
     def test_registro_deportista_altura_mayor_3digitos(self, setup_data: Deportista):
         '''Prueba de crear un deportista con altura mayor a 3 digitos'''
         with app.test_client() as test_client:
@@ -202,7 +211,7 @@ class TestRegistroDeportista():
                 "nombre": setup_data.nombre,
                 "apellido": setup_data.apellido,
                 "tipo_identificacion": setup_data.tipo_identificacion,
-                 "numero_identificacion": setup_data.numero_identificacion,
+                "numero_identificacion": setup_data.numero_identificacion,
                 "email": fake.email(),
                 "genero": setup_data.genero,
                 "edad": setup_data.edad,
@@ -218,9 +227,9 @@ class TestRegistroDeportista():
 
             response = test_client.post(
                 'registro-usuarios/registro/deportistas', json=body)
-            
+
             assert response.status_code == 400
-    
+
     def test_registro_deportista_tiempo_residencia_mayor_3digitos(self, setup_data: Deportista):
         '''Prueba de crear un deportista con tiempo de residencia mayor a 3 digitos'''
         with app.test_client() as test_client:
@@ -228,7 +237,7 @@ class TestRegistroDeportista():
                 "nombre": setup_data.nombre,
                 "apellido": setup_data.apellido,
                 "tipo_identificacion": setup_data.tipo_identificacion,
-                 "numero_identificacion": setup_data.numero_identificacion,
+                "numero_identificacion": setup_data.numero_identificacion,
                 "email": fake.email(),
                 "genero": setup_data.genero,
                 "edad": setup_data.edad,
@@ -244,5 +253,5 @@ class TestRegistroDeportista():
 
             response = test_client.post(
                 'registro-usuarios/registro/deportistas', json=body)
-            
+
             assert response.status_code == 400

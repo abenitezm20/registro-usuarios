@@ -17,31 +17,32 @@ logger = logging.getLogger(__name__)
 def setup_data():
     logger.info("Inicio TestLoginDeportista")
 
-    deportista_random = Deportista(
-        nombre=fake.name(),
-        apellido=fake.name(),
-        tipo_identificacion=fake.random_element(elements=(
+    info_deportista = {
+        'nombre': fake.name(),
+        'apellido': fake.name(),
+        'tipo_identificacion': fake.random_element(elements=(
             tipo_identificacion.value for tipo_identificacion in TipoIdentificacionEnum)),
-        numero_identificacion=fake.random_int(min=1000000, max=9999999),
-        email=fake.email(),
-        genero=fake.random_element(
+        'numero_identificacion': fake.random_int(min=1000000, max=9999999),
+        'email': fake.email(),
+        'genero': fake.random_element(
             elements=(genero.value for genero in GeneroEnum)),
-        edad=fake.random_int(min=18, max=100),
-        peso=fake.random_int(min=40, max=200),
-        altura=fake.random_int(min=140, max=200),
-        pais_nacimiento=fake.country(),
-        ciudad_nacimiento=fake.city(),
-        pais_residencia=fake.country(),
-        ciudad_residencia=fake.city(),
-        antiguedad_residencia=fake.random_int(min=0, max=10),
-        contrasena=fake.password(),
-    )
+        'edad': fake.random_int(min=18, max=100),
+        'peso': fake.random_int(min=40, max=200),
+        'altura': fake.random_int(min=140, max=200),
+        'pais_nacimiento': fake.country(),
+        'ciudad_nacimiento': fake.city(),
+        'pais_residencia': fake.country(),
+        'ciudad_residencia': fake.city(),
+        'antiguedad_residencia': fake.random_int(min=0, max=10),
+        'contrasena': fake.password(),
+    }
+    deportista_random = Deportista(**info_deportista)
 
     db_session.add(deportista_random)
     db_session.commit()
     logger.info('Deportista creado: ' + deportista_random.email)
     yield deportista_random
-    logger.info("Fin TestGetTestLoginDeportistaDeporte")
+    logger.info("Fin TestLoginDeportista")
     db_session.delete(deportista_random)
     db_session.commit()
 

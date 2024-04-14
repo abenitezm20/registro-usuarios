@@ -7,10 +7,14 @@ from flask import request
 from src.errors.errors import ApiError, TokenNotFound, Unauthorized
 
 HEADER_NAME = 'Authorization'
+#URL_AUTORIZADOR = os.getenv(
+#    'URL_AUTORIZADOR', 'http://127.0.0.1:3000/autorizador')
+#URL_VALIDAR_TOKEN = URL_AUTORIZADOR + '/seguridad/validar-token'
+#URL_GENERAR_TOKEN = URL_AUTORIZADOR + '/seguridad/generar-token'
 URL_AUTORIZADOR = os.getenv(
-    'URL_AUTORIZADOR', 'http://127.0.0.1:3000/autorizador')
-URL_VALIDAR_TOKEN = URL_AUTORIZADOR + '/seguridad/validar-token'
-URL_GENERAR_TOKEN = URL_AUTORIZADOR + '/seguridad/generar-token'
+    'URL_AUTORIZADOR', 'http://127.0.0.1:3000')
+URL_VALIDAR_TOKEN = URL_AUTORIZADOR + '/autorizador/seguridad/validar-token'
+URL_GENERAR_TOKEN = URL_AUTORIZADOR + '/autorizador/seguridad/generar-token'
 TOKEN_INVALIDO = 'Token invalido'
 
 logger = logging.getLogger(__name__)
@@ -79,7 +83,7 @@ def get_token(email: str):
     #     raise ApiError
 
     #*****new
-    URL_GENERAR_TOKEN = URL_AUTORIZADOR + '/health/ping'
+    URL_GENERAR_TOKEN = URL_AUTORIZADOR + '/autorizador/health/ping'
     logger.info(f'Obteniendo token para {email}')
     logger.info(f'URL {URL_GENERAR_TOKEN}')
 

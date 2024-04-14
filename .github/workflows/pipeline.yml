@@ -30,12 +30,12 @@ jobs:
         run: pip install pipenv
       - name: Install dependencies
         run: pipenv install --dev
-      # - name: Run unit test
-      #   env:
-      #     DB_NAME: ${{ secrets.DB_NAME }}
-      #     DB_PASS: ${{ secrets.DB_PASS }}
-      #   run: |
-      #     pipenv run pytest --cov=src --cov-fail-under=80
+      - name: Run unit test
+        env:
+          DB_NAME: ${{ secrets.DB_NAME }}
+          DB_PASS: ${{ secrets.DB_PASS }}
+        run: |
+          pipenv run pytest --cov=src --cov-fail-under=80
 
   create_release:
     needs: test_servicio

@@ -56,24 +56,37 @@ def token_required(func):
 
 
 def get_token(email: str):
+    # logger.info(f'Obteniendo token para {email}')
+    # logger.info(f'URL {URL_GENERAR_TOKEN}')
+    # try:
+    #     response = requests.post(
+    #         url=URL_GENERAR_TOKEN, json={"email": email})
+
+    #     if response.status_code == 200:
+    #         data = response.json()
+
+    #         if data['token'] is None:
+    #             logger.error(TOKEN_INVALIDO)
+    #             raise ApiError
+
+    #         return data['token']
+    #     else:
+    #         logger.error('Credenciales invalidas')
+    #         raise Unauthorized
+
+    # except Exception as e:
+    #     logger.error(f'Error obteniendo token con el autorizador {e}')
+    #     raise ApiError
+
+    #*****new
+    URL_GENERAR_TOKEN = URL_AUTORIZADOR + '/health/ping'
     logger.info(f'Obteniendo token para {email}')
     logger.info(f'URL {URL_GENERAR_TOKEN}')
-    try:
-        response = requests.post(
-            url=URL_GENERAR_TOKEN, json={"email": email})
 
-        if response.status_code == 200:
-            data = response.json()
-
-            if data['token'] is None:
-                logger.error(TOKEN_INVALIDO)
-                raise ApiError
-
-            return data['token']
-        else:
-            logger.error('Credenciales invalidas')
-            raise Unauthorized
-
-    except Exception as e:
-        logger.error(f'Error obteniendo token con el autorizador {e}')
+    response = requests.get(url=URL_GENERAR_TOKEN)
+    if response.status_code == 200:
+        logger.info(f'me pude conectar con el autorizador {email}')
+    else:
+        logger.error('no me pude conectar con el autorizador')
         raise ApiError
+    return '123456'

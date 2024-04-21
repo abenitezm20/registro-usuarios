@@ -55,8 +55,8 @@ class RegistrarDeporteDeportista(BaseCommand):
         return response
     
     def _getDeporte(self, nombre_deporte: str):
-            URL_GESTOR_DEPORTES = os.getenv('URL_GESTOR_DEPORTES', 'http://localhost:3003/gestor-deportes')
-            URL_OBTENER_DEPORTES = URL_GESTOR_DEPORTES + '/deportes/obtener_deportes'
+            URL_GESTOR_DEPORTES = os.getenv('URL_GESTOR_DEPORTES', 'http://localhost:3003')
+            URL_OBTENER_DEPORTES = URL_GESTOR_DEPORTES + '/gestor-deportes/deportes/obtener_deportes'
             logger.info(f'URL {URL_OBTENER_DEPORTES}')
 
             try:

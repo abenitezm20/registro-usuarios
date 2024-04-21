@@ -1,5 +1,6 @@
 import logging
 from flask import Blueprint, request, jsonify, make_response
+from src.commands.registro.obtener_deportista import ObtenerDeportista
 from src.commands.registro.registrar_deportista import RegistrarDeportista
 from src.commands.registro.registrar_deporte_deportista import RegistrarDeporteDeportista
 from src.commands.registro.obtener_plan_subscripcion import ObtenerPlanSubscripcion
@@ -8,6 +9,14 @@ from src.commands.registro.registrar_socios import RegistrarSocios
 
 logger = logging.getLogger(__name__)
 registro_blueprint = Blueprint('registro', __name__)
+
+@registro_blueprint.route('/deportista/<id_deportista>', methods=['GET'])
+def obtener_deportista(id_deportista: str):
+    if id_deportista is None:
+        return make_response(jsonify('Id no puede ser nulo'), 400)
+    else:
+        result = ObtenerDeportista(id_deportista).execute()
+    return make_response(jsonify(result), 200)
 
 
 @registro_blueprint.route('/deportistas', methods=['POST'])

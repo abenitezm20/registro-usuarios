@@ -65,8 +65,10 @@ class RegistrarDeportista(BaseCommand):
             record = Deportista(**self.info_deportista)
             db_session.add(record)
             db_session.commit()
+            deportistanuevo = db_session.query(Deportista).filter(Deportista.email == self.email).first()
             response = {
-                'message': 'success'
+                'message': 'success',
+                'id_deportista': str(deportistanuevo.id)
             }
 
         return response

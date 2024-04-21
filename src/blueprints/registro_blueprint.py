@@ -4,7 +4,7 @@ from src.commands.registro.actualizar_plan_subscripcion import ActualizarPlanSub
 from src.commands.registro.obtener_deportista import ObtenerDeportista
 from src.commands.registro.registrar_deportista import RegistrarDeportista
 from src.commands.registro.registrar_deporte_deportista import RegistrarDeporteDeportista
-from src.commands.registro.obtener_plan_subscripcion import ObtenerPlanSubscripcion
+from src.commands.registro.obtener_plan_subscripcion import ObtenerPlanSubscripcion, ObtenerPlanesSubscripcion
 from src.commands.registro.registrar_socios import RegistrarSocios
 from src.utils.seguridad_utils import DeportistaToken, token_required
 
@@ -20,6 +20,12 @@ def obtener_deportista(deportista_token: DeportistaToken):
         'email': deportista_token.email,
     }
     result = ObtenerDeportista(**info_deportista).execute()
+    return make_response(jsonify(result), 200)
+
+
+@registro_blueprint.route('/obtener_planes_subscripion', methods=['GET'])
+def obtener_planes_subscripcion():
+    result = ObtenerPlanesSubscripcion().execute()
     return make_response(jsonify(result), 200)
 
 

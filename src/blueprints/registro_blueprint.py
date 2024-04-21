@@ -4,7 +4,7 @@ from src.commands.registro.actualizar_plan_subscripcion import ActualizarPlanSub
 from src.commands.registro.obtener_deportista import ObtenerDeportista
 from src.commands.registro.registrar_deportista import RegistrarDeportista
 from src.commands.registro.registrar_deporte_deportista import RegistrarDeporteDeportista
-from src.commands.registro.obtener_plan_subscripcion import ObtenerPlanSubscripcion, ObtenerPlanesSubscripcion
+from src.commands.registro.obtener_plan_subscripcion import ObtenerPlanSubscripcion, ObtenerPlanesSubscripcion, ObtenerPlanesSubscripcionAccion
 from src.commands.registro.registrar_socios import RegistrarSocios
 from src.utils.seguridad_utils import DeportistaToken, token_required
 
@@ -23,9 +23,25 @@ def obtener_deportista(deportista_token: DeportistaToken):
     return make_response(jsonify(result), 200)
 
 
+
 @registro_blueprint.route('/obtener_planes_subscripion', methods=['GET'])
 def obtener_planes_subscripcion():
+    logger.info(f'Obteniendo planes de subscripcion')
     result = ObtenerPlanesSubscripcion().execute()
+    return make_response(jsonify(result), 200)
+
+
+#id_accion es opcional, y puede tener los valores "actual" o "disponbible"
+@registro_blueprint.route('/obtener_planes_subscripion/<accion>', methods=['GET'])
+@token_required
+def obtener_planes_subscripcion_accion(deportista_token: DeportistaToken, accion: str):
+    logger.info(f'Obteniendo planes de subscripcion')
+    if accion is not None:
+        info_deportista = {
+            'email': deportista_token.email,
+            'accion': accion,
+        }
+        result = ObtenerPlanesSubscripcionAccion(**info_deportista).execute()
     return make_response(jsonify(result), 200)
 
 

@@ -26,7 +26,8 @@ def token_required(func):
         if token_bearer is None:
             raise TokenNotFound
 
-        email = None
+        #email = None
+        deportista: DeportistaToken = None
         token = token_bearer.split(' ')[1]
         logger.info(f'URL {URL_VALIDAR_TOKEN}')
 
@@ -42,7 +43,10 @@ def token_required(func):
                     raise Unauthorized
 
                 logger.info('Token valido')
-                email = data['email']
+                deportista = DeportistaToken(
+                    email=data['email']
+                )
+                #email = data['email']
             else:
                 logger.error(TOKEN_INVALIDO)
                 raise Unauthorized
@@ -51,7 +55,8 @@ def token_required(func):
             logging.error(f'Error validando token con el autorizador {e}')
             raise Unauthorized
 
-        return func(email, *args, **kwargs)
+        #return func(email, *args, **kwargs)
+        return func(deportista, *args, **kwargs)
     return wrapper
 
 
@@ -77,3 +82,7 @@ def get_token(email: str):
     except Exception as e:
         logger.error(f'Error obteniendo token con el autorizador {e}')
         raise ApiError
+
+class DeportistaToken():
+    def __init__(self, email: str):
+        self.email = email

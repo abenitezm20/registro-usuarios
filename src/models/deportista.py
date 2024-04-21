@@ -1,9 +1,11 @@
 import enum
 from datetime import datetime
-from sqlalchemy import Column, Integer, Enum, String, Float, BigInteger
+from sqlalchemy import Column, Integer, Enum, String, Float, BigInteger, ForeignKey
+from sqlalchemy.orm import relationship
 from .model import Model
 from .db import Base
-
+from sqlalchemy.dialects.postgresql import UUID
+from marshmallow import Schema, fields
 
 class TipoIdentificacionEnum(str, enum.Enum):
     tarjeta_identidad = "tarjeta_identidad"
@@ -36,7 +38,29 @@ class Deportista(Model, Base):
     ciudad_residencia = Column(String(50))
     antiguedad_residencia = Column(Integer)
     contrasena = Column(String(50))
+    id_plan_subscripcion = Column(UUID, ForeignKey('plan_subscripcion.id'))
+    plan_subscripcion = relationship('PlanSubscripcion')
 
     def __init__(self, **info_deportista):
         Model.__init__(self)
         self.__dict__.update(info_deportista)
+
+
+class DeportistaSchema(Schema):
+    id = fields.UUID()
+    nombre = fields.Str()
+    apellido = fields.Str()
+    tipo_identificacion = fields.Enum(TipoIdentificacionEnum)
+    numero_identificacion = fields.Int()
+    email = fields.Str()
+    genero = fields.Enum(GeneroEnum)
+    edad = fields.Int()
+    peso = fields.Float()
+    altura = fields.Float()
+    pais_nacimiento = fields.Str()
+    ciudad_nacimiento = fields.Str()
+    pais_residencia = fields.Str()
+    ciudad_residencia = fields.Str()
+    antiguedad_residencia = fields.Int()
+    contrasena = fields.Str()
+    id_plan_subscripcion = fields.UUID()

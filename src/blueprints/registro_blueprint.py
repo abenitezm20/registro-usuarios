@@ -5,17 +5,20 @@ from src.commands.registro.registrar_deportista import RegistrarDeportista
 from src.commands.registro.registrar_deporte_deportista import RegistrarDeporteDeportista
 from src.commands.registro.obtener_plan_subscripcion import ObtenerPlanSubscripcion
 from src.commands.registro.registrar_socios import RegistrarSocios
+from src.utils.seguridad_utils import DeportistaToken, token_required
 
 
 logger = logging.getLogger(__name__)
 registro_blueprint = Blueprint('registro', __name__)
 
-@registro_blueprint.route('/deportista/<id_deportista>', methods=['GET'])
-def obtener_deportista(id_deportista: str):
-    if id_deportista is None:
-        return make_response(jsonify('Id no puede ser nulo'), 400)
-    else:
-        result = ObtenerDeportista(id_deportista).execute()
+@registro_blueprint.route('/deportista', methods=['GET'])
+@token_required
+def obtener_deportista(deportista_token: DeportistaToken):
+    logger.info(f'Obteniendo datos del deportista {deportista_token.email}')
+    info_deportista = {
+        'email': deportista_token.email,
+    }
+    result = ObtenerDeportista(**info_deportista).execute()
     return make_response(jsonify(result), 200)
 
 

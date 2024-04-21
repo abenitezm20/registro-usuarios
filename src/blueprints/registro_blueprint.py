@@ -1,5 +1,6 @@
 import logging
 from flask import Blueprint, request, jsonify, make_response
+from src.commands.registro.actualizar_plan_subscripcion import ActualizarPlanSubscripcion
 from src.commands.registro.obtener_deportista import ObtenerDeportista
 from src.commands.registro.registrar_deportista import RegistrarDeportista
 from src.commands.registro.registrar_deporte_deportista import RegistrarDeporteDeportista
@@ -19,6 +20,20 @@ def obtener_deportista(deportista_token: DeportistaToken):
         'email': deportista_token.email,
     }
     result = ObtenerDeportista(**info_deportista).execute()
+    return make_response(jsonify(result), 200)
+
+
+@registro_blueprint.route('/deportistaupgrade', methods=['PUT'])
+@token_required
+def actualizar_subscripcion_deportista(deportista_token: DeportistaToken):
+    logger.info(f'Obteniendo datos del deportista {deportista_token.email}')
+    body = request.get_json()
+    id_plan_subscripcion = ObtenerPlanSubscripcion(body.get('plan_subscripcion', None)).execute()
+    info_deportista = {
+        'email': deportista_token.email,
+        'id_plan_subscripcion': id_plan_subscripcion,
+    }
+    result = ActualizarPlanSubscripcion(**info_deportista).execute()
     return make_response(jsonify(result), 200)
 
 

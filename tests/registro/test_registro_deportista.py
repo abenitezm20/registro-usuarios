@@ -1,7 +1,9 @@
 import json
 import pytest
 import logging
-from unittest.mock import patch, MagicMock
+import uuid
+from unittest.mock import patch, MagicMock, Mock
+#import requests_mock as requests_mock_lib
 
 from faker import Faker
 from src.main import app
@@ -51,10 +53,17 @@ def setup_data():
         db_session.commit()
 
 
+@pytest.fixture
+def mock_get(mocker):
+    mock = MagicMock()
+    mocker.patch('requests.get', return_value=mock)
+    return mock
+
+
 @pytest.mark.usefixtures("setup_data")
 class TestRegistroDeportista():
 
-    def test_registro_deportista_exitoso(self, setup_data: Deportista):
+    def test_registro_deportista_exitoso(self, setup_data, mock_get):
         '''Prueba de crear un deportista exitosamente'''
         with app.test_client() as test_client:
             body = {
@@ -76,13 +85,29 @@ class TestRegistroDeportista():
                 "deportes" : setup_data.deportes
             }
 
+            #Se crea un deporte para el deportista
+            deporte_id = uuid.uuid4()
+            deporte = {
+                "deporte_id": deporte_id,
+                "deporte_nombre": "atletismo"
+            }
+
+            mock_response = MagicMock()
+            mock_response.status_code = 200
+            mock_response.json.return_value = {'result': [deporte]}
+            mock_get.return_value = mock_response
+            print("esta es la respuesta: " + str(mock_response.json()))
+
+            mock_get.side_effect = [mock_response]
+
             response = test_client.post(
                 'registro-usuarios/registro/deportistas', json=body)
 
             assert response.status_code == 200
             #assert response.json['message'] == 'success'
 
-    def test_registro_deportista_existente(self, setup_data: Deportista):
+    @patch('requests.post')
+    def test_registro_deportista_existente(self, setup_data, mock_post):
         '''Prueba de crear un deportista exitosamente'''
         with app.test_client() as test_client:
             body = {

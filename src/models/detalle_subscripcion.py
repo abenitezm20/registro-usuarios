@@ -10,7 +10,7 @@ class DetalleSubscripcion(Model, Base):
     __tablename__ = "detalle_subscripcion"
     id_plan_subscripcion = Column(UUID, ForeignKey('plan_subscripcion.id'))
     plan_subscripcion = relationship('PlanSubscripcion')
-    beneficios = Column(String(300))
+    beneficios = Column(String(100000))
 
     def __init__(self, **info_detalle_subscripcion):
         Model.__init__(self)

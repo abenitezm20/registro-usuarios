@@ -1,5 +1,7 @@
 import logging
 from flask import Blueprint, request, jsonify, make_response
+from src.commands.registro.actualizar_deporte_deportista import ActualizarDeporteDeportista
+from src.commands.registro.actualizar_deportista import ActualizarDeportista
 from src.commands.registro.actualizar_plan_subscripcion import ActualizarPlanSubscripcion
 from src.commands.registro.obtener_deportista import ObtenerDeportista
 from src.commands.registro.registrar_deportista import RegistrarDeportista
@@ -57,6 +59,43 @@ def actualizar_subscripcion_deportista(deportista_token: DeportistaToken):
     }
     result = ActualizarPlanSubscripcion(**info_deportista).execute()
     return make_response(jsonify(result), 200)
+
+
+@registro_blueprint.route('/actualizar', methods=['PUT'])
+@token_required
+def actualizar_deportista(deportista_token: DeportistaToken):
+    logger.info(f'Actualizacion datos del deportista {deportista_token.email}')
+    body = request.get_json()
+
+    info_deportista = {
+        'nombre': body.get('nombre', None),
+        'apellido': body.get('apellido', None),
+        'tipo_identificacion': body.get('tipo_identificacion', None),
+        'numero_identificacion': body.get('numero_identificacion', None),
+        'email': body.get('email', None),
+        'genero': body.get('genero', None),
+        'edad': body.get('edad', None),
+        'peso': body.get('peso', None),
+        'altura': body.get('altura', None),
+        'pais_nacimiento': body.get('pais_nacimiento', None),
+        'ciudad_nacimiento': body.get('ciudad_nacimiento', None),
+        'pais_residencia': body.get('pais_residencia', None),
+        'ciudad_residencia': body.get('ciudad_residencia', None),
+        'antiguedad_residencia': body.get('antiguedad_residencia', None),
+    }
+
+    result_deportista = ActualizarDeportista(**info_deportista).execute()
+
+    info_deporte_deportista = {
+        'deportes': body.get('deportes', None)
+    }
+
+    result_deporte_deportista = ActualizarDeporteDeportista(info_deporte_deportista, str(result_deportista['id_deportista'])).execute()
+
+    if  result_deportista['message'] ==  result_deporte_deportista['message']:
+        return make_response(jsonify(result_deportista['message']), 200)
+    else:
+        return make_response(jsonify(result_deportista['message']), 400)
 
 
 @registro_blueprint.route('/deportistas', methods=['POST'])

@@ -38,5 +38,5 @@ class LoginDeportista(BaseCommand):
             logger.error("Contrasena invalida")
             raise Unauthorized
 
-        token = get_token(self.email)
+        token = get_token(self.email, 'deportista', str(deportista.id_plan_subscripcion))
         return {'token': token}

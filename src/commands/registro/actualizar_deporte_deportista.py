@@ -29,6 +29,7 @@ class ActualizarDeporteDeportista(BaseCommand):
         db_session.execute(dele)
         db_session.commit()
 
+        logger.info(f'Se asignan nuevos deportes al deportista: {self.id_deportista}')
         #se asignan los nuevos deportes
         for deporte in self.info_deporte_deportista['deportes']:
 

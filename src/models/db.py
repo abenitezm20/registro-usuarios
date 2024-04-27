@@ -29,5 +29,6 @@ def init_db():
     from .deportista import Deportista
     from .deporte_deportista import DeporteDeportista
     from .socio_negocio import SocioNegocio
+    from .deporte import Deporte
     Base.metadata.create_all(bind=engine)
 

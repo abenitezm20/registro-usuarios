@@ -44,7 +44,9 @@ def token_required(func):
 
                 logger.info('Token valido')
                 deportista = DeportistaToken(
-                    email=data['email']
+                    email=data['email'],
+                    subscripcion=data['subscripcion'],
+                    tipo_usuario=data['tipo_usuario'],
                 )
                 #email = data['email']
             else:
@@ -60,12 +62,12 @@ def token_required(func):
     return wrapper
 
 
-def get_token(email: str):
+def get_token(email: str, tipo_usuario: str = None, subscripcion: str = None):
     logger.info(f'Obteniendo token para {email}')
     logger.info(f'URL {URL_GENERAR_TOKEN}')
     try:
         response = requests.post(
-            url=URL_GENERAR_TOKEN, json={"email": email})
+            url=URL_GENERAR_TOKEN, json={"email": email, "subscripcion": subscripcion, "tipo_usuario": tipo_usuario})
 
         if response.status_code == 200:
             data = response.json()
@@ -84,5 +86,7 @@ def get_token(email: str):
         raise ApiError
 
 class DeportistaToken():
-    def __init__(self, email: str):
+    def __init__(self, email: str, subscripcion: str, tipo_usuario: str):
         self.email = email
+        self.subscripcion = subscripcion
+        self.tipo_usuario = tipo_usuario

@@ -1,4 +1,5 @@
 import json
+import uuid
 import pytest
 import logging
 from unittest.mock import patch, MagicMock
@@ -54,7 +55,8 @@ def setup_data():
 @pytest.mark.usefixtures("setup_data")
 class TestRegistroDeportista():
 
-    def test_registro_deportista_exitoso(self, setup_data: Deportista):
+    @patch('requests.get')
+    def test_registro_deportista_exitoso(self, mock_get, setup_data: Deportista):
         '''Prueba de crear un deportista exitosamente'''
         with app.test_client() as test_client:
             body = {
@@ -75,6 +77,18 @@ class TestRegistroDeportista():
                 "contrasena": setup_data.contrasena,
                 "deportes" : setup_data.deportes
             }
+
+            deporte_id = uuid.uuid4()
+            deporte = {
+                "deporte_nombre": "atletismo"
+            }
+
+            mock_response = MagicMock()
+            mock_response.status_code = 200
+            mock_response.json.return_value = {'result': [deporte]}
+            mock_response.return_value = mock_response
+            mock_get.side_effect = [mock_response]
+
 
             response = test_client.post(
                 'registro-usuarios/registro/deportistas', json=body)

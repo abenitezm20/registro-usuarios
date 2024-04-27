@@ -5,6 +5,7 @@ import logging
 
 import requests
 from src.commands.base_command import BaseCommand
+from src.models.deporte import Deporte
 from src.models.deporte_deportista import DeporteDeportista
 from src.models.db import db_session
 from src.errors.errors import ApiError, BadRequest, UserAlreadyExist
@@ -25,7 +26,9 @@ class RegistrarDeporteDeportista(BaseCommand):
 
             if deporte.get('atletismo'):
                 if deporte['atletismo'] == 1:
-                    self.id_deporte = self._getDeporte("Atletismo")
+                    deporteBD = db_session.query(Deporte).filter(Deporte.nombre == "Atletismo").first()
+                    #self.id_deporte = self._getDeporte("Atletismo")
+                    self.id_deporte = deporteBD.id
 
                     if self.id_deporte is None:
                         logger.error("Deporte no encontrado")
@@ -38,7 +41,9 @@ class RegistrarDeporteDeportista(BaseCommand):
                     print("Atletismo no es seleccionado")
             elif deporte.get('ciclismo'):
                 if deporte['ciclismo'] == 1:
-                    self.id_deporte = self._getDeporte("Ciclismo")
+                    deporteBD = db_session.query(Deporte).filter(Deporte.nombre == "Ciclismo").first()
+                    self.id_deporte = deporteBD.id
+                    #self.id_deporte = self._getDeporte("Ciclismo")
 
                     if self.id_deporte is None:
                         logger.error("Deporte no encontrado")
@@ -57,7 +62,7 @@ class RegistrarDeporteDeportista(BaseCommand):
     def _getDeporte(self, nombre_deporte: str):
             URL_GESTOR_DEPORTES = os.getenv('URL_GESTOR_DEPORTES', 'http://localhost:3003')
             URL_OBTENER_DEPORTES = URL_GESTOR_DEPORTES + '/gestor-deportes/deportes/obtener_deportes'
-            logger.info(f'URL {URL_OBTENER_DEPORTES}')
+            logger.info(f'URL {URL_OBTENER_DEPORTES} nombre_deporte: {nombre_deporte}')
 
             try:
                 response = requests.get(url=URL_OBTENER_DEPORTES)

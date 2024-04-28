@@ -72,7 +72,7 @@ def actualizar_deportista(deportista_token: DeportistaToken):
         'apellido': body.get('apellido', None),
         'tipo_identificacion': body.get('tipo_identificacion', None),
         'numero_identificacion': body.get('numero_identificacion', None),
-        'email': body.get('email', None),
+        'email': deportista_token.email,
         'genero': body.get('genero', None),
         'edad': body.get('edad', None),
         'peso': body.get('peso', None),

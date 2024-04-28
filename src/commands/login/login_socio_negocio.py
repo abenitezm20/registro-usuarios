@@ -38,5 +38,5 @@ class LoginSocioNegocio(BaseCommand):
             logger.error("Contrasena invalida")
             raise Unauthorized
 
-        token = get_token(self.email)
+        token = get_token(self.email, 'socio_negocio', str(0))
         return {'token': token}

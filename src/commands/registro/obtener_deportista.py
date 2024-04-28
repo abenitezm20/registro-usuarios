@@ -1,6 +1,7 @@
 import logging
 
 from src.commands.base_command import BaseCommand
+from src.commands.registro.obtener_deporte_deportista import ObtenerDeporteDeportista
 from src.errors.errors import BadRequest
 from src.models.deportista import Deportista, DeportistaSchema
 
@@ -24,5 +25,8 @@ class ObtenerDeportista(BaseCommand):
             return None
 
         else:
+            deporte_deportista = ObtenerDeporteDeportista(deportista.id).execute()
             schema = DeportistaSchema()
-            return schema.dump(deportista)
+            response = schema.dump(deportista)
+            response['deportes'] = deporte_deportista
+            return response

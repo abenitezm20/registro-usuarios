@@ -29,7 +29,7 @@ class ActualizarDeporteDeportista(BaseCommand):
         db_session.execute(dele)
         db_session.commit()
 
-        logger.info(f'Se asignan nuevos deportes al deportista: {self.id_deportista}')
+        logger.info("Se asignan nuevos deportes: " + str(self.info_deporte_deportista['deportes']) + " al deportista: " + self.id_deportista)
         #se asignan los nuevos deportes
         for deporte in self.info_deporte_deportista['deportes']:
 
@@ -65,26 +65,5 @@ class ActualizarDeporteDeportista(BaseCommand):
             'message': 'success'
         }
         return response
-    
-    def _getDeporte(self, nombre_deporte: str):
-            URL_GESTOR_DEPORTES = os.getenv('URL_GESTOR_DEPORTES', 'http://localhost:3003')
-            URL_OBTENER_DEPORTES = URL_GESTOR_DEPORTES + '/gestor-deportes/deportes/obtener_deportes'
-            logger.info(f'URL {URL_OBTENER_DEPORTES} nombre_deporte: {nombre_deporte}')
-
-            try:
-                response = requests.get(url=URL_OBTENER_DEPORTES)
-
-                if response.json() is not None:
-                    data = response.json()
-                    for deporte in data:
-                        if deporte['nombre'] == nombre_deporte:
-                            return deporte['id']
-                    return None
-                else:
-                    return None
-
-            except Exception as e:
-                logger.error(f'Error obteniendo deportes {e}')
-                raise ApiError
    
    

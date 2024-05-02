@@ -27,16 +27,17 @@ class LoginDeportista(BaseCommand):
     def execute(self):
         logger.info(f"Login deportista: {self.email}")
 
-        deportista = db_session.query(Deportista).filter(
-            Deportista.email == self.email).first()
+        with db_session() as session:
+            deportista = session.query(Deportista).filter(
+                Deportista.email == self.email).first()
 
-        if deportista is None:
-            logger.error("Deportista no encontrado")
-            raise ResourceNotFound
+            if deportista is None:
+                logger.error("Deportista no encontrado")
+                raise ResourceNotFound
 
-        if deportista.contrasena != self.contrasena:
-            logger.error("Contrasena invalida")
-            raise Unauthorized
+            if deportista.contrasena != self.contrasena:
+                logger.error("Contrasena invalida")
+                raise Unauthorized
 
-        token = get_token(self.email, 'deportista', str(deportista.id_plan_subscripcion))
-        return {'token': token}
+            token = get_token(self.email, 'deportista', str(deportista.id_plan_subscripcion))
+            return {'token': token}

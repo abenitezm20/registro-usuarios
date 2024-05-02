@@ -15,21 +15,22 @@ logger = logging.getLogger(__name__)
 
 @pytest.fixture(scope="class")
 def setup_data():
-    socio_random = SocioNegocio(
-        nombre=fake.name(),
-        tipo_identificacion=fake.random_element(elements=(
-            tipo_identificacion.value for tipo_identificacion in TipoIdentificacionSocioEnum)),
-        numero_identificacion=fake.random_int(min=1000000, max=999999999),
-        email=fake.email(),
-        contrasena=fake.password())
+    with db_session() as session:
+        socio_random = SocioNegocio(
+            nombre=fake.name(),
+            tipo_identificacion=fake.random_element(elements=(
+                tipo_identificacion.value for tipo_identificacion in TipoIdentificacionSocioEnum)),
+            numero_identificacion=fake.random_int(min=1000000, max=999999999),
+            email=fake.email(),
+            contrasena=fake.password())
 
-    yield socio_random
+        yield socio_random
 
-    tmp_socio = db_session.query(SocioNegocio).filter(
-        SocioNegocio.email == socio_random.email).first()
-    if tmp_socio is not None:
-        db_session.delete(tmp_socio)
-        db_session.commit()
+        tmp_socio = session.query(SocioNegocio).filter(
+            SocioNegocio.email == socio_random.email).first()
+        if tmp_socio is not None:
+            session.delete(tmp_socio)
+            session.commit()
 
 
 @pytest.mark.usefixtures("setup_data")

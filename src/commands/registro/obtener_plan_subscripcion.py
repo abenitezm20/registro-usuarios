@@ -35,35 +35,38 @@ class ObtenerPlanesSubscripcion(BaseCommand):
 
     def execute(self):
         logger.info(f"Buscando Planes de Subscripcion")
-        respuesta = []
-        obtenerPlanesSubscripcion  = db_session.query(PlanSubscripcion).all()
-        if obtenerPlanesSubscripcion is None:
-            logger.error("Planes no encontrados")
-            raise BadRequest
-        else:
-            for planes in obtenerPlanesSubscripcion:
-                beneficios = db_session.query(DetalleSubscripcion).filter(DetalleSubscripcion.id_plan_subscripcion == planes.id).first()
 
-                if beneficios is None:
-                    logger.error("Beneficios no encontrados")
-                    raise BadRequest
-                else:
-                    split_beneficios = beneficios.beneficios.split('|')
-                    beneficiosOrder = []
-                    for i in range(len(split_beneficios)):
-                        beneficios_temp = {
-                            'beneficios': split_beneficios[i],
-                            'id_detalle_subscripcion': i+1
+        with db_session() as session:
+
+            respuesta = []
+            obtenerPlanesSubscripcion  = session.query(PlanSubscripcion).all()
+            if obtenerPlanesSubscripcion is None:
+                logger.error("Planes no encontrados")
+                raise BadRequest
+            else:
+                for planes in obtenerPlanesSubscripcion:
+                    beneficios = session.query(DetalleSubscripcion).filter(DetalleSubscripcion.id_plan_subscripcion == planes.id).first()
+
+                    if beneficios is None:
+                        logger.error("Beneficios no encontrados")
+                        raise BadRequest
+                    else:
+                        split_beneficios = beneficios.beneficios.split('|')
+                        beneficiosOrder = []
+                        for i in range(len(split_beneficios)):
+                            beneficios_temp = {
+                                'beneficios': split_beneficios[i],
+                                'id_detalle_subscripcion': i+1
+                            }
+                            beneficiosOrder.append(beneficios_temp)
+
+                        resp_tmp = {
+                            'id_plan_subscripcion': planes.id,
+                            'nombre': planes.nombre,
+                            'beneficios': beneficiosOrder
                         }
-                        beneficiosOrder.append(beneficios_temp)
-
-                    resp_tmp = {
-                        'id_plan_subscripcion': planes.id,
-                        'nombre': planes.nombre,
-                        'beneficios': beneficiosOrder
-                    }
-                    respuesta.append(resp_tmp)
-            return respuesta       
+                        respuesta.append(resp_tmp)
+                return respuesta       
 
 class ObtenerPlanesSubscripcionAccion(BaseCommand):
     def __init__(self, **info_deportista):

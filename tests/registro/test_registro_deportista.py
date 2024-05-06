@@ -19,51 +19,52 @@ logger = logging.getLogger(__name__)
 
 @pytest.fixture(scope="class")
 def setup_data():
-    info_deportista = {
-        'nombre': fake.name(),
-        'apellido': fake.name(),
-        'tipo_identificacion': fake.random_element(elements=(
-            tipo_identificacion.value for tipo_identificacion in TipoIdentificacionEnum)),
-        'numero_identificacion': fake.random_int(min=1000000, max=999999999),
-        'email': fake.email(),
-        'genero': fake.random_element(elements=(genero.value for genero in GeneroEnum)),
-        'edad': fake.random_int(min=18, max=100),
-        'peso': fake.pyfloat(3, 1, positive=True),
-        'altura': fake.random_int(min=140, max=200),
-        'pais_nacimiento': fake.country(),
-        'ciudad_nacimiento': fake.city(),
-        'pais_residencia': fake.country(),
-        'ciudad_residencia': fake.city(),
-        'antiguedad_residencia': fake.random_int(min=0, max=10),
-        'contrasena': fake.password(),
-        'deportes' : [ {"atletismo": 1}, {"ciclismo": 0}]
-    }
-    deportista_random = Deportista(**info_deportista)
+    with db_session() as session:
+        info_deportista = {
+            'nombre': fake.name(),
+            'apellido': fake.name(),
+            'tipo_identificacion': fake.random_element(elements=(
+                tipo_identificacion.value for tipo_identificacion in TipoIdentificacionEnum)),
+            'numero_identificacion': fake.random_int(min=1000000, max=999999999),
+            'email': fake.email(),
+            'genero': fake.random_element(elements=(genero.value for genero in GeneroEnum)),
+            'edad': fake.random_int(min=18, max=100),
+            'peso': fake.pyfloat(3, 1, positive=True),
+            'altura': fake.random_int(min=140, max=200),
+            'pais_nacimiento': fake.country(),
+            'ciudad_nacimiento': fake.city(),
+            'pais_residencia': fake.country(),
+            'ciudad_residencia': fake.city(),
+            'antiguedad_residencia': fake.random_int(min=0, max=10),
+            'contrasena': fake.password(),
+            'deportes' : [ {"atletismo": 1}, {"ciclismo": 0}]
+        }
+        deportista_random = Deportista(**info_deportista)
 
-    info_deporte = {
-        'nombre': 'Atletismo',
-    }
-    deporte_random = Deporte(**info_deporte)
-    db_session.add(deporte_random)
-    db_session.commit()
+        info_deporte = {
+            'nombre': fake.name(),
+        }
+        deporte_random = Deporte(**info_deporte)
+        session.add(deporte_random)
+        session.commit()
 
-    info_plan_subscripcion = {
-        'nombre': 'Gratis',
-    }
-    planSubs_random = PlanSubscripcion(**info_plan_subscripcion)
-    db_session.add(planSubs_random)
-    db_session.commit()
+        info_plan_subscripcion = {
+            'nombre': 'Gratis',
+        }
+        planSubs_random = PlanSubscripcion(**info_plan_subscripcion)
+        session.add(planSubs_random)
+        session.commit()
 
             
-    yield {
-        'deportes': deporte_random,
-        'deportista': deportista_random,
-        'plan_subscripcion': planSubs_random
-    }
+        yield {
+            'deportes': deporte_random,
+            'deportista': deportista_random,
+            'plan_subscripcion': planSubs_random
+        }
 
-    db_session.delete(deporte_random)
-    db_session.delete(planSubs_random)
-    db_session.commit()
+        session.delete(deporte_random)
+        session.delete(planSubs_random)
+        session.commit()
 
 
 @pytest.mark.usefixtures("setup_data")
@@ -100,36 +101,37 @@ class TestRegistroDeportista():
 
     def test_registro_deportista_existente(self, setup_data: Deportista):
         '''Prueba de crear un deportista exitosamente'''
-        with app.test_client() as test_client:
-            body = {
-                "nombre": setup_data['deportista'].nombre,
-                "apellido": setup_data['deportista'].apellido,
-                "tipo_identificacion": setup_data['deportista'].tipo_identificacion,
-                "numero_identificacion": setup_data['deportista'].numero_identificacion,
-                "email": setup_data['deportista'].email,
-                "genero": setup_data['deportista'].genero,
-                "edad": setup_data['deportista'].edad,
-                "peso": setup_data['deportista'].peso,
-                "altura": setup_data['deportista'].altura,
-                "pais_nacimiento": setup_data['deportista'].pais_nacimiento,
-                "ciudad_nacimiento": setup_data['deportista'].ciudad_nacimiento,
-                "pais_residencia": setup_data['deportista'].pais_residencia,
-                "ciudad_residencia": setup_data['deportista'].ciudad_residencia,
-                "antiguedad_residencia": setup_data['deportista'].antiguedad_residencia,
-                "contrasena": setup_data['deportista'].contrasena,
-                "deportes" : setup_data['deportista'].deportes
-            }
+        with db_session() as session:
+            with app.test_client() as test_client:
+                body = {
+                    "nombre": setup_data['deportista'].nombre,
+                    "apellido": setup_data['deportista'].apellido,
+                    "tipo_identificacion": setup_data['deportista'].tipo_identificacion,
+                    "numero_identificacion": setup_data['deportista'].numero_identificacion,
+                    "email": setup_data['deportista'].email,
+                    "genero": setup_data['deportista'].genero,
+                    "edad": setup_data['deportista'].edad,
+                    "peso": setup_data['deportista'].peso,
+                    "altura": setup_data['deportista'].altura,
+                    "pais_nacimiento": setup_data['deportista'].pais_nacimiento,
+                    "ciudad_nacimiento": setup_data['deportista'].ciudad_nacimiento,
+                    "pais_residencia": setup_data['deportista'].pais_residencia,
+                    "ciudad_residencia": setup_data['deportista'].ciudad_residencia,
+                    "antiguedad_residencia": setup_data['deportista'].antiguedad_residencia,
+                    "contrasena": setup_data['deportista'].contrasena,
+                    "deportes" : setup_data['deportista'].deportes
+                }
 
-            response = test_client.post(
-                'registro-usuarios/registro/deportistas', json=body)
+                response = test_client.post(
+                    'registro-usuarios/registro/deportistas', json=body)
 
-            assert response.status_code == 432
-            
-            tmp_deportista = db_session.query(Deportista).filter(Deportista.email == setup_data['deportista'].email).first()
-            deleSTMS = delete(DeporteDeportista).where(DeporteDeportista.id_deportista == tmp_deportista.id)
-            db_session.execute(deleSTMS)
-            db_session.delete(tmp_deportista)
-            db_session.commit()
+                assert response.status_code == 432
+                
+                tmp_deportista = session.query(Deportista).filter(Deportista.email == setup_data['deportista'].email).first()
+                deleSTMS = delete(DeporteDeportista).where(DeporteDeportista.id_deportista == tmp_deportista.id)
+                session.execute(deleSTMS)
+                session.delete(tmp_deportista)
+                session.commit()
 
     def test_registro_deportista_campos_vacios(self):
         '''Prueba de crear un deportista con campos vacios'''

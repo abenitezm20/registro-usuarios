@@ -22,42 +22,44 @@ class RegistrarDeporteDeportista(BaseCommand):
         self.id_deportista = id_deportista
 
     def execute(self):
-        for deporte in self.info_deporte_deportista['deportes']:
+        with db_session() as session:
 
-            if deporte.get('atletismo'):
-                if deporte['atletismo'] == 1:
-                    deporteBD = db_session.query(Deporte).filter(Deporte.nombre == "Atletismo").first()
-                    #self.id_deporte = self._getDeporte("Atletismo")
-                    self.id_deporte = deporteBD.id
+            for deporte in self.info_deporte_deportista['deportes']:
 
-                    if self.id_deporte is None:
-                        logger.error("Deporte no encontrado")
-                        raise BadRequest
+                if deporte.get('atletismo'):
+                    if deporte['atletismo'] == "1":
+                        deporteBD = session.query(Deporte).filter(Deporte.nombre == "Atletismo").first()
+                        #self.id_deporte = self._getDeporte("Atletismo")
+                        self.id_deporte = deporteBD.id
+
+                        if self.id_deporte is None:
+                            logger.error("Deporte no encontrado")
+                            raise BadRequest
+                        else:
+                            record = DeporteDeportista(id_deporte=self.id_deporte, id_deportista=self.id_deportista)
+                            session.add(record)
+                            session.commit()
                     else:
-                        record = DeporteDeportista(id_deporte=self.id_deporte, id_deportista=self.id_deportista)
-                        db_session.add(record)
-                        db_session.commit()
-                else:
-                    print("Atletismo no es seleccionado")
-            elif deporte.get('ciclismo'):
-                if deporte['ciclismo'] == 1:
-                    deporteBD = db_session.query(Deporte).filter(Deporte.nombre == "Ciclismo").first()
-                    self.id_deporte = deporteBD.id
-                    #self.id_deporte = self._getDeporte("Ciclismo")
+                        print("Atletismo no es seleccionado")
+                elif deporte.get('ciclismo'):
+                    if deporte['ciclismo'] == "1":
+                        deporteBD = session.query(Deporte).filter(Deporte.nombre == "Ciclismo").first()
+                        self.id_deporte = deporteBD.id
+                        #self.id_deporte = self._getDeporte("Ciclismo")
 
-                    if self.id_deporte is None:
-                        logger.error("Deporte no encontrado")
-                        raise BadRequest
+                        if self.id_deporte is None:
+                            logger.error("Deporte no encontrado")
+                            raise BadRequest
+                        else:
+                            record = DeporteDeportista(id_deporte=self.id_deporte, id_deportista=self.id_deportista)
+                            session.add(record)
+                            session.commit()
                     else:
-                        record = DeporteDeportista(id_deporte=self.id_deporte, id_deportista=self.id_deportista)
-                        db_session.add(record)
-                        db_session.commit()
-                else:
-                    print("Ciclismo no es seleccionado")     
-        response = {
-            'message': 'success'
-        }
-        return response
+                        print("Ciclismo no es seleccionado")     
+            response = {
+                'message': 'success'
+            }
+            return response
     
     def _getDeporte(self, nombre_deporte: str):
             URL_GESTOR_DEPORTES = os.getenv('URL_GESTOR_DEPORTES', 'http://localhost:3003')

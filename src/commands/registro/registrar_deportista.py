@@ -52,23 +52,24 @@ class RegistrarDeportista(BaseCommand):
         if len(str(self.antiguedad_residencia)) > 3:
             logger.error("Tiempo Residencia mayor a 3 digitos")
             raise BadRequest
+        
+        with db_session() as session:
+            # Validar que deportista no exista
+            deportista = session.query(Deportista).filter(
+                Deportista.email == self.email).first()
 
-        # Validar que deportista no exista
-        deportista = db_session.query(Deportista).filter(
-            Deportista.email == self.email).first()
-
-        if deportista is not None:
-            logger.error("Deportista Ya Existe")
-            raise UserAlreadyExist
-        else:
-            logger.info(f"Registrando Deportista: {self.email}")
-            record = Deportista(**self.info_deportista)
-            db_session.add(record)
-            db_session.commit()
-            deportistanuevo = db_session.query(Deportista).filter(Deportista.email == self.email).first()
-            response = {
-                'message': 'success',
-                'id_deportista': str(deportistanuevo.id)
-            }
+            if deportista is not None:
+                logger.error("Deportista Ya Existe")
+                raise UserAlreadyExist
+            else:
+                logger.info(f"Registrando Deportista: {self.email}")
+                record = Deportista(**self.info_deportista)
+                session.add(record)
+                session.commit()
+                deportistanuevo = session.query(Deportista).filter(Deportista.email == self.email).first()
+                response = {
+                    'message': 'success',
+                    'id_deportista': str(deportistanuevo.id)
+                }
 
         return response

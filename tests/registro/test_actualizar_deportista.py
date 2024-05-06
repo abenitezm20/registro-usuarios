@@ -37,7 +37,7 @@ def setup_data():
             'ciudad_residencia': fake.city(),
             'antiguedad_residencia': fake.random_int(min=0, max=10),
             'contrasena': fake.password(),
-            'deportes' : [ {"atletismo": 1}, {"ciclismo": 1}]
+            'deportes': [{"atletismo": 1}, {"ciclismo": 1}]
         }
         deportista_random = Deportista(**info_deportista)
         session.add(deportista_random)
@@ -50,11 +50,17 @@ def setup_data():
         session.add(deporte_random)
         session.commit()
 
+        deportista = {
+            'id': deportista_random.id,
+            'email': deportista_random.email,
+            'id_plan_subscripcion': deportista_random.id_plan_subscripcion,
+        }
+
         yield {
-            'deportista': deportista_random, 
+            'deportista': deportista,
             'deportes': deporte_random,
         }
-        
+
         session.delete(deporte_random)
         session.delete(deportista_random)
         session.commit()
@@ -62,29 +68,29 @@ def setup_data():
 
 @pytest.mark.usefixtures("setup_data")
 class TestActualizarDeportista():
-    
+
     @patch('requests.post')
     def test_actualizar_deportista_exitoso(self, mock_post, setup_data):
         '''Prueba de obtener un deportista exitosamente'''
         with db_session() as session:
             with app.test_client() as test_client:
 
-                #Mock para obtener el token
-                deportista: Deportista = setup_data['deportista']
+                # Mock para obtener el token
+                deportista: dict = setup_data['deportista']
                 mock_response_1 = MagicMock()
                 mock_response_1.status_code = 200
                 mock_response_1.json.return_value = {
-                    'token_valido': True, 
-                    'email': deportista.email,
-                    'subscripcion': deportista.id_plan_subscripcion,
+                    'token_valido': True,
+                    'email': deportista['email'],
+                    'subscripcion': deportista['id_plan_subscripcion'],
                     'tipo_usuario': 'deportista'
-                    }
+                }
                 mock_post.return_value = mock_response_1
 
                 headers = {'Authorization': 'Bearer 123'}
 
                 body = {
-                    'email': deportista.email,
+                    'email': deportista['email'],
                     'nombre': fake.name(),
                     'apellido': fake.name(),
                     'tipo_identificacion': fake.random_element(elements=(
@@ -99,15 +105,16 @@ class TestActualizarDeportista():
                     'pais_residencia': fake.country(),
                     'ciudad_residencia': fake.city(),
                     'antiguedad_residencia': fake.random_int(min=0, max=10),
-                    'deportes' : [ {"atletismo": 1}, {"ciclismo": 0}]
+                    'deportes': [{"atletismo": 1}, {"ciclismo": 0}]
                 }
-            
+
                 response = test_client.put(
                     '/registro-usuarios/registro/actualizar', headers=headers, json=body, follow_redirects=True)
                 response_json = json.loads(response.data)
 
                 assert response.status_code == 200
 
-                dele = delete(DeporteDeportista).where(DeporteDeportista.id_deportista == deportista.id)
+                dele = delete(DeporteDeportista).where(
+                    DeporteDeportista.id_deportista == deportista['id'])
                 session.execute(dele)
                 session.commit()

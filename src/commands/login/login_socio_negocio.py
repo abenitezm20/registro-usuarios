@@ -27,16 +27,17 @@ class LoginSocioNegocio(BaseCommand):
     def execute(self):
         logger.info(f"Login socio negocio: {self.email}")
 
-        socio_negocio = db_session.query(SocioNegocio).filter(
-            SocioNegocio.email == self.email).first()
+        with db_session() as session:
+            socio_negocio = session.query(SocioNegocio).filter(
+                SocioNegocio.email == self.email).first()
 
-        if socio_negocio is None:
-            logger.error("Socio de negocio no encontrado")
-            raise ResourceNotFound
+            if socio_negocio is None:
+                logger.error("Socio de negocio no encontrado")
+                raise ResourceNotFound
 
-        if socio_negocio.contrasena != self.contrasena:
-            logger.error("Contrasena invalida")
-            raise Unauthorized
+            if socio_negocio.contrasena != self.contrasena:
+                logger.error("Contrasena invalida")
+                raise Unauthorized
 
-        token = get_token(self.email, 'socio_negocio', str(0))
-        return {'token': token}
+            token = get_token(self.email, 'socio_negocio', str(0))
+            return {'token': token}

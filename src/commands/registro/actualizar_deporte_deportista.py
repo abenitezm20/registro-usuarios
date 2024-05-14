@@ -37,7 +37,7 @@ class ActualizarDeporteDeportista(BaseCommand):
             for deporte in self.info_deporte_deportista['deportes']:
 
                 if deporte.get('atletismo'):
-                    if deporte['atletismo'] == 1:
+                    if deporte['atletismo'] == "1":
                         deporte_bd = session.query(Deporte).filter(
                             Deporte.nombre == "Atletismo").first()
                         self.id_deporte = deporte_bd.id
@@ -53,7 +53,7 @@ class ActualizarDeporteDeportista(BaseCommand):
                     else:
                         print("Atletismo no es seleccionado")
                 elif deporte.get('ciclismo'):
-                    if deporte['ciclismo'] == 1:
+                    if deporte['ciclismo'] == "1":
                         deporte_bd = session.query(Deporte).filter(
                             Deporte.nombre == "Ciclismo").first()
                         self.id_deporte = deporte_bd.id

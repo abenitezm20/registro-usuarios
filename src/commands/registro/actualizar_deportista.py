@@ -1,11 +1,9 @@
-import os
-from sqlalchemy import update
-import jwt
 import logging
+
+from sqlalchemy import update
 from src.commands.base_command import BaseCommand
-from src.models.plan_subscripcion import PlanSubscripcion
 from src.models.db import db_session
-from src.errors.errors import BadRequest, UserAlreadyExist
+from src.errors.errors import BadRequest
 from src.models.deportista import Deportista
 
 logger = logging.getLogger(__name__)
@@ -28,10 +26,6 @@ class ActualizarDeportista(BaseCommand):
             logger.error("Deportista No Existe")
             raise BadRequest
         else:
-            #record = Deportista(**self.info_deportista)
-            #db_session.add(record)
-            #deportista.id_plan_subscripcion = self.id_plan_subscripcion
-
             deportista.nombre = self.nombre
             deportista.apellido = self.apellido
             deportista.tipo_identificacion = self.tipo_identificacion

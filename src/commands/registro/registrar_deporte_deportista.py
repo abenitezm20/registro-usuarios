@@ -1,6 +1,4 @@
-import json
 import os
-import jwt
 import logging
 
 import requests
@@ -8,8 +6,8 @@ from src.commands.base_command import BaseCommand
 from src.models.deporte import Deporte
 from src.models.deporte_deportista import DeporteDeportista
 from src.models.db import db_session
-from src.errors.errors import ApiError, BadRequest, UserAlreadyExist
-from flask import request
+from src.errors.errors import ApiError, BadRequest
+
 
 logger = logging.getLogger(__name__)
 
@@ -29,7 +27,6 @@ class RegistrarDeporteDeportista(BaseCommand):
                 if deporte.get('atletismo'):
                     if deporte['atletismo'] == "1":
                         deporteBD = session.query(Deporte).filter(Deporte.nombre == "Atletismo").first()
-                        #self.id_deporte = self._getDeporte("Atletismo")
                         self.id_deporte = deporteBD.id
 
                         if self.id_deporte is None:
@@ -45,7 +42,6 @@ class RegistrarDeporteDeportista(BaseCommand):
                     if deporte['ciclismo'] == "1":
                         deporteBD = session.query(Deporte).filter(Deporte.nombre == "Ciclismo").first()
                         self.id_deporte = deporteBD.id
-                        #self.id_deporte = self._getDeporte("Ciclismo")
 
                         if self.id_deporte is None:
                             logger.error("Deporte no encontrado")
@@ -81,5 +77,3 @@ class RegistrarDeporteDeportista(BaseCommand):
             except Exception as e:
                 logger.error(f'Error obteniendo deportes {e}')
                 raise ApiError
-   
-   

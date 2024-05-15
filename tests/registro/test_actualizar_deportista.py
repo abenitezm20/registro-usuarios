@@ -44,7 +44,7 @@ def setup_data():
         session.commit()
 
         info_deporte = {
-            'nombre': 'Atletismo',
+            'nombre': fake.name(),
         }
         deporte_random = Deporte(**info_deporte)
         session.add(deporte_random)

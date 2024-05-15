@@ -1,9 +1,5 @@
-import json
-import os
-import jwt
 import logging
 
-import requests
 from src.commands.base_command import BaseCommand
 from src.models.deporte import Deporte
 from src.models.deporte_deportista import DeporteDeportista

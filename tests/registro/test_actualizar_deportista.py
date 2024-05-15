@@ -37,7 +37,7 @@ def setup_data():
             'ciudad_residencia': fake.city(),
             'antiguedad_residencia': fake.random_int(min=0, max=10),
             'contrasena': fake.password(),
-            'deportes': [{"atletismo": 1}, {"ciclismo": 1}]
+            'deportes': [{"atletismo": "0"}, {"ciclismo": "0"}]
         }
         deportista_random = Deportista(**info_deportista)
         session.add(deportista_random)
@@ -105,7 +105,7 @@ class TestActualizarDeportista():
                     'pais_residencia': fake.country(),
                     'ciudad_residencia': fake.city(),
                     'antiguedad_residencia': fake.random_int(min=0, max=10),
-                    'deportes': [{"atletismo": 1}, {"ciclismo": 0}]
+                    'deportes': [{"atletismo": "1"}, {"ciclismo": "1"}]
                 }
 
                 response = test_client.put(

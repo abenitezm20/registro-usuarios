@@ -28,7 +28,7 @@ def obtener_deportista(deportista_token: DeportistaToken):
 
 @registro_blueprint.route('/obtener_planes_subscripion', methods=['GET'])
 def obtener_planes_subscripcion():
-    logger.info(f'Obteniendo planes de subscripcion')
+    logger.info('Obteniendo planes de subscripcion')
     result = ObtenerPlanesSubscripcion().execute()
     return make_response(jsonify(result), 200)
 
@@ -37,7 +37,7 @@ def obtener_planes_subscripcion():
 @registro_blueprint.route('/obtener_planes_subscripion/<accion>', methods=['GET'])
 @token_required
 def obtener_planes_subscripcion_accion(deportista_token: DeportistaToken, accion: str):
-    logger.info(f'Obteniendo planes de subscripcion')
+    logger.info('Obteniendo planes de subscripcion')
     if accion is not None:
         info_deportista = {
             'email': deportista_token.email,

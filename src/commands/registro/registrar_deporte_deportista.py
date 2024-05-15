@@ -26,8 +26,8 @@ class RegistrarDeporteDeportista(BaseCommand):
 
                 if deporte.get('atletismo'):
                     if deporte['atletismo'] == "1":
-                        deporteBD = session.query(Deporte).filter(Deporte.nombre == "Atletismo").first()
-                        self.id_deporte = deporteBD.id
+                        deporte_bd = session.query(Deporte).filter(Deporte.nombre == "Atletismo").first()
+                        self.id_deporte = deporte_bd.id
 
                         if self.id_deporte is None:
                             logger.error("Deporte no encontrado")
@@ -40,8 +40,8 @@ class RegistrarDeporteDeportista(BaseCommand):
                         print("Atletismo no es seleccionado")
                 elif deporte.get('ciclismo'):
                     if deporte['ciclismo'] == "1":
-                        deporteBD = session.query(Deporte).filter(Deporte.nombre == "Ciclismo").first()
-                        self.id_deporte = deporteBD.id
+                        deporte_bd = session.query(Deporte).filter(Deporte.nombre == "Ciclismo").first()
+                        self.id_deporte = deporte_bd.id
 
                         if self.id_deporte is None:
                             logger.error("Deporte no encontrado")

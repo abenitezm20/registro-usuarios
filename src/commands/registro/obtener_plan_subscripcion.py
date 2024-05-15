@@ -101,35 +101,35 @@ class ObtenerPlanesSubscripcionAccion(BaseCommand):
             if beneficios is None:
                 logger.error("Beneficios no encontrados")
                 raise BadRequest
+
+            split_beneficios = beneficios.beneficios.split('|')
+            beneficios_order = []
+            for i in range(len(split_beneficios)):
+                beneficios_temp = {
+                    'beneficios': split_beneficios[i],
+                    'id_detalle_subscripcion': i+1
+                }
+                beneficios_order.append(beneficios_temp)
+
+            # Comparo si el plan es el actual o disponible
+            resp_actual = []
+            resp_disponible = []
+            if planes.id == deportista_actual.id_plan_subscripcion:
+                resp_actual = {
+                    'id_plan_subscripcion': planes.id,
+                    'nombre': planes.nombre,
+                    'beneficios': beneficios_order
+                }
             else:
-                split_beneficios = beneficios.beneficios.split('|')
-                beneficios_order = []
-                for i in range(len(split_beneficios)):
-                    beneficios_temp = {
-                        'beneficios': split_beneficios[i],
-                        'id_detalle_subscripcion': i+1
-                    }
-                    beneficios_order.append(beneficios_temp)
+                resp_disponible = {
+                    'id_plan_subscripcion': planes.id,
+                    'nombre': planes.nombre,
+                    'beneficios': beneficios_order
+                }
 
-                # Comparo si el plan es el actual o disponible
-                resp_actual = []
-                resp_disponible = []
-                if planes.id == deportista_actual.id_plan_subscripcion:
-                    resp_actual = {
-                        'id_plan_subscripcion': planes.id,
-                        'nombre': planes.nombre,
-                        'beneficios': beneficios_order
-                    }
-                else:
-                    resp_disponible = {
-                        'id_plan_subscripcion': planes.id,
-                        'nombre': planes.nombre,
-                        'beneficios': beneficios_order
-                    }
-
-                if self.info_deportista['accion'] == 'actual' and resp_actual != []:
-                    respuesta.append(resp_actual)
-                elif self.info_deportista['accion'] == 'disponible' and resp_disponible != []:
-                    respuesta.append(resp_disponible)
+            if self.info_deportista['accion'] == 'actual' and resp_actual != []:
+                respuesta.append(resp_actual)
+            elif self.info_deportista['accion'] == 'disponible' and resp_disponible != []:
+                respuesta.append(resp_disponible)
 
         return respuesta

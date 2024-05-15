@@ -50,6 +50,20 @@ def setup_data():
         session.add(deporte_random)
         session.commit()
 
+        atletismo: Deporte = session.query(Deporte).filter(
+            Deporte.nombre == "Atletismo").first()
+        if atletismo is None:
+            atletismo = Deporte(nombre="Atletismo")
+            session.add(atletismo)
+            session.commit()
+
+        ciclismo: Deporte = session.query(Deporte).filter(
+            Deporte.nombre == "Ciclismo").first()
+        if ciclismo is None:
+            ciclismo = Deporte(nombre="Ciclismo")
+            session.add(ciclismo)
+            session.commit()
+
         deportista = {
             'id': deportista_random.id,
             'email': deportista_random.email,
